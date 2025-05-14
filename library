@@ -1,0 +1,60 @@
+-- Create the database
+CREATE DATABASE IF NOT EXISTS LibraryDB;
+USE LibraryDB;
+
+-- Authors table
+CREATE TABLE Authors (
+    author_id INT AUTO_INCREMENT PRIMARY KEY,
+    name VARCHAR(100) NOT NULL,
+    nationality VARCHAR(50),
+    birth_year YEAR
+);
+
+-- Categories table
+CREATE TABLE Categories (
+    category_id INT AUTO_INCREMENT PRIMARY KEY,
+    name VARCHAR(100) NOT NULL UNIQUE
+);
+
+-- Books table
+CREATE TABLE Books (
+    book_id INT AUTO_INCREMENT PRIMARY KEY,
+    title VARCHAR(150) NOT NULL,
+    isbn VARCHAR(20) NOT NULL UNIQUE,
+    publication_year YEAR,
+    author_id INT NOT NULL,
+    category_id INT NOT NULL,
+    copies_available INT DEFAULT 1 CHECK (copies_available >= 0),
+    FOREIGN KEY (author_id) REFERENCES Authors(author_id),
+    FOREIGN KEY (category_id) REFERENCES Categories(category_id)
+);
+
+-- Members table
+CREATE TABLE Members (
+    member_id INT AUTO_INCREMENT PRIMARY KEY,
+    full_name VARCHAR(100) NOT NULL,
+    email VARCHAR(100) NOT NULL UNIQUE,
+    phone VARCHAR(15),
+    membership_date DATE NOT NULL DEFAULT CURRENT_DATE
+);
+
+-- Borrowing table (Many-to-Many relationship between Books and Members)
+CREATE TABLE Borrowings (
+    borrowing_id INT AUTO_INCREMENT PRIMARY KEY,
+    member_id INT NOT NULL,
+    book_id INT NOT NULL,
+    borrow_date DATE NOT NULL DEFAULT CURRENT_DATE,
+    due_date DATE NOT NULL,
+    return_date DATE,
+    FOREIGN KEY (member_id) REFERENCES Members(member_id),
+    FOREIGN KEY (book_id) REFERENCES Books(book_id)
+);
+
+-- Fines table (1-to-1 relationship with Borrowings if late return)
+CREATE TABLE Fines (
+    fine_id INT AUTO_INCREMENT PRIMARY KEY,
+    borrowing_id INT NOT NULL UNIQUE,
+    amount DECIMAL(8,2) NOT NULL CHECK (amount >= 0),
+    paid BOOLEAN NOT NULL DEFAULT FALSE,
+    FOREIGN KEY (borrowing_id) REFERENCES Borrowings(borrowing_id)
+);
