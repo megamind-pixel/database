@@ -14,4 +14,5 @@ It models books, authors, members, borrowings, fines, and categories — enablin
 - Uses relational integrity via primary and foreign keys.
 
 ## 📂 Project Structure
+![image](https://github.com/user-attachments/assets/ef11bc4f-9b47-4519-aadd-eb3df718131f)
 
